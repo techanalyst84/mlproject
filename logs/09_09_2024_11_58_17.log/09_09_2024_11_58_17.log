@@ -1,0 +1,37 @@
+[ 2024-09-09 11:58:17,936 ] 97 werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.254.74:8080
+[ 2024-09-09 11:58:17,936 ] 97 werkzeug - INFO - [33mPress CTRL+C to quit[0m
+[ 2024-09-09 11:58:22,498 ] 838 app - ERROR - Exception on /predictdata [POST]
+Traceback (most recent call last):
+  File "C:\Users\ssune\Documents\GitHub\Complete-Data-Science-With-Machine-Learning-And-NLP-2024\mlProject\src\utils.py", line 57, in load_object
+    with open(file_path, "rb") as file_obj:
+FileNotFoundError: [Errno 2] No such file or directory: 'artifacts\\preprocessor.pkl'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\ssune\Documents\GitHub\Complete-Data-Science-With-Machine-Learning-And-NLP-2024\mlProject\src\pipeline\predict_pipeline.py", line 17, in predict
+    preprocessor=load_object(file_path=preprocessor_path)
+  File "C:\Users\ssune\Documents\GitHub\Complete-Data-Science-With-Machine-Learning-And-NLP-2024\mlProject\src\utils.py", line 61, in load_object
+    raise CustomException(e, sys)
+src.exception.CustomException: Error occured in python script name [C:\Users\ssune\Documents\GitHub\Complete-Data-Science-With-Machine-Learning-And-NLP-2024\mlProject\src\utils.py] line number [57] error message[[Errno 2] No such file or directory: 'artifacts\\preprocessor.pkl']
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\ssune\Documents\GitHub\learngenAI310\lib\site-packages\flask\app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\ssune\Documents\GitHub\learngenAI310\lib\site-packages\flask\app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\ssune\Documents\GitHub\learngenAI310\lib\site-packages\flask\app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\ssune\Documents\GitHub\learngenAI310\lib\site-packages\flask\app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "C:\Users\ssune\Documents\GitHub\Complete-Data-Science-With-Machine-Learning-And-NLP-2024\mlProject\app.py", line 37, in predict_datapoint
+    results=predict_pipeline.predict(pred_df)
+  File "C:\Users\ssune\Documents\GitHub\Complete-Data-Science-With-Machine-Learning-And-NLP-2024\mlProject\src\pipeline\predict_pipeline.py", line 23, in predict
+    raise CustomException(e,sys)
+src.exception.CustomException: Error occured in python script name [C:\Users\ssune\Documents\GitHub\Complete-Data-Science-With-Machine-Learning-And-NLP-2024\mlProject\src\pipeline\predict_pipeline.py] line number [17] error message[Error occured in python script name [C:\Users\ssune\Documents\GitHub\Complete-Data-Science-With-Machine-Learning-And-NLP-2024\mlProject\src\utils.py] line number [57] error message[[Errno 2] No such file or directory: 'artifacts\\preprocessor.pkl']]
+[ 2024-09-09 11:58:22,502 ] 97 werkzeug - INFO - 127.0.0.1 - - [09/Sep/2024 11:58:22] "[35m[1mPOST /predictdata HTTP/1.1[0m" 500 -
