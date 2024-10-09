@@ -3,25 +3,32 @@
 This project demonstrates the full lifecycle of building, structuring, and deploying a machine learning solution. It follows best practices in modular design, cloud deployment, and automation to ensure scalability and maintainability.
 
 ---
+
 ## Key Takeaways & Learnings
 
 - **Structured Approach:** The project adopts a modular structure that separates data ingestion, transformation, model training, and deployment components. This organization allows for clear, maintainable, and reusable code across various ML tasks.
+
 ---
+
 ## Project Workflow
+
 ### Step 1: Manage Dependencies
 
 The project uses a `requirements.txt` file to manage dependencies:
+
 ```bash
 numpy
 pandas
 scikit-learn
 logging
 ```
+
 Dependencies can be installed using:
 
 ```bash
 pip install -r requirements.txt
 ```
+
 ---
 
 ### Step 2: Organize Project Structure
@@ -65,12 +72,82 @@ setup(
 ### Step 3: Implementing ML Components
 
 - **Data Ingestion:** Loads data using `pandas`.
+
+```python
+import pandas as pd
+
+class DataIngestion:
+    def load_data(self, file_path):
+        return pd.read_csv(file_path)
+```
+
 - **Data Transformation:** Preprocesses data with `LabelEncoder`.
+
+```python
+from sklearn.preprocessing import LabelEncoder
+
+class DataTransformation:
+    def transform(self, data):
+        le = LabelEncoder()
+        data['category'] = le.fit_transform(data['category'])
+        return data
+```
+
 - **Model Training:** Trains and evaluates the model using `RandomForestClassifier` and `accuracy_score`.
+
+```python
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+
+class ModelTrainer:
+    def train(self, X_train, y_train):
+        model = RandomForestClassifier()
+        model.fit(X_train, y_train)
+        return model
+    
+    def evaluate(self, model, X_test, y_test):
+        predictions = model.predict(X_test)
+        return accuracy_score(y_test, predictions)
+```
 
 ---
 
-### Step 4: Automating CI/CD with GitHub Actions and Docker
+### Step 4: Implementing Pipelines
+
+- **Training Pipeline:** Manages the end-to-end training process.
+
+```python
+from components.data_ingestion import DataIngestion
+from components.data_transformation import DataTransformation
+from components.model_trainer import ModelTrainer
+
+class TrainPipeline:
+    def run(self):
+        ingestion = DataIngestion()
+        data = ingestion.load_data('data.csv')
+        transformer = DataTransformation()
+        transformed_data = transformer.transform(data)
+        trainer = ModelTrainer()
+        model = trainer.train(transformed_data.drop('target', axis=1),
+                              transformed_data['target'])
+        accuracy = trainer.evaluate(model, X_test, y_test)
+        print(f"Model Accuracy: {accuracy}")
+```
+
+- **Prediction Pipeline:** Handles predictions with a pre-trained model.
+
+```python
+from joblib import load
+
+class PredictPipeline:
+    def predict(self, data):
+        model = load('model.joblib')
+        return model.predict(data)
+```
+
+---
+
+### Step 5: Automating CI/CD with GitHub Actions and Docker
 
 The next phase of the project focuses on automating the build and deployment process using GitHub Actions to push the Docker image to AWS EC2 once the build is complete.
 
@@ -92,35 +169,64 @@ CMD ["python3", "app.py"]
 
 ---
 
-### Step 5: CI/CD Pipeline Configuration
+### Step 6: Logging and Exception Handling
+
+- **Logging:** Creates a `logger.py` file for managing logging.
+
+```python
+import logging
+import os
+
+log_file = os.path.join(os.getcwd(), "logs", "project.log")
+logging.basicConfig(filename=log_file, level=logging.INFO,
+                    format="%(asctime)s [%(levelname)s] %(message)s")
+
+def log_message(message):
+    logging.info(message)
+```
+
+- **Exception Handling:** Defines custom exceptions in `exception.py`.
+
+```python
+class CustomException(Exception):
+    def __init__(self, message, error):
+        super().__init__(message)
+        self.error = error
+```
+
+---
+
+### Step 7: Utilities
+
+- **Utility Functions:** Provides reusable functions in `utils.py` for saving and loading models.
+
+```python
+from joblib import dump, load
+
+def save_model(model, file_path):
+    dump(model, file_path)
+
+def load_model(file_path):
+    return load(file_path)
+```
+
+---
+
+### Step 8: Testing
+
+- **Component Testing:** Ensure individual components like data ingestion and model training work correctly.
+- **Pipeline Testing:** Run `train_pipeline.py` to test the entire training pipeline.
+- **Logging and Exceptions:** Verify that all logs and exceptions are captured correctly.
+
+---
+
+### Step 9: CI/CD Pipeline Configuration
 
 The GitHub Actions workflow file automates the build and deployment process. This includes building the Docker image, pushing it to Amazon ECR, and deploying it on an AWS EC2 machine.
 
+**GitHub Actions Workflow:**
+
+ 
 
 ---
-
-### Step 6: Project Deployment
-
-1. **Build Docker Image:** The GitHub Action workflow checks out the latest code, installs utilities, builds a Docker image, and pushes it to Amazon Elastic Container Registry (ECR).
-2. **Deploy to AWS EC2:** After building the image, the workflow pulls the latest image to the EC2 instance and runs the containerized ML application, making it available to users.
-3. **Cleanup:** After deployment, the workflow removes any unused Docker containers and images to free up space.
-
----
-
-## Technical Skills Highlighted
-
-- Python programming
-- Machine learning libraries (`scikit-learn`)
-- Data manipulation (`pandas`, `numpy`)
-- Web development (Flask)
-- CI/CD with GitHub Actions
-- Docker image creation and management
-- Cloud deployment (AWS EC2, Amazon ECR)
-
----
-
-## Project Impact
-
-This project provided a comprehensive, hands-on experience in structuring and deploying a machine learning project. By implementing GitHub Actions for CI/CD, Docker for containerization, and AWS EC2 for deployment, the project achieved automation, scalability, and efficiency. This approach equips me with the skills to tackle real-world machine learning tasks and deployment pipelines.
-
---- 
+ 
